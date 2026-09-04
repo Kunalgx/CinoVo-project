@@ -1,0 +1,16 @@
+import { Router } from "express";
+import * as c from "../controllers/movie.controller.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+const r = Router();
+r.get("/tmdb-health", asyncHandler(c.tmdbHealthCheck));
+r.get("/trending", asyncHandler(c.trending));
+r.get("/discover", asyncHandler(c.discover));
+r.get("/search", asyncHandler(c.search));
+r.get("/search/:type", asyncHandler(c.searchTyped));
+r.get("/collection/:id", asyncHandler(c.collection));
+r.get("/:type/:id/credits", asyncHandler(c.credits));
+r.get("/:type/:id/providers", asyncHandler(c.providers));
+r.get("/:type/:id/seasons/:season", asyncHandler(c.season));
+r.get("/:type/:id/similar", asyncHandler(c.similar));
+r.get("/:type/:id", asyncHandler(c.details));
+export default r;

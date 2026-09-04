@@ -1,0 +1,14 @@
+{
+  "name": "cinevo",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "install:all": "npm install && npm --prefix server install && npm --prefix client install",
+    "format": "prettier --write \"client/src/**/*.{js,jsx,css}\" \"server/src/**/*.js\" \"package.json\" \"client/package.json\" \"server/package.json\" \"client/*.js\"",
+    "format:check": "prettier --check \"client/src/**/*.{js,jsx,css}\" \"server/src/**/*.js\" \"package.json\" \"client/package.json\" \"server/package.json\" \"client/*.js\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "prettier": "^3.9.6"
+  }
+}
