@@ -121,6 +121,16 @@ export const collection = async (req, res) =>
     success: true,
     data: await tmdbService.collection(req.params.id),
   });
+export const person = async (req, res) =>
+  res.json({
+    success: true,
+    data: await tmdbService.person(req.params.id),
+  });
+export const personCredits = async (req, res) =>
+  res.json({
+    success: true,
+    data: await tmdbService.personCredits(req.params.id),
+  });
 
 
   //

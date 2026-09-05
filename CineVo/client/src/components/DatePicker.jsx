@@ -62,7 +62,7 @@ export default function DatePicker({ value, onChange, minDate, maxDate }) {
   };
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#0d131c]/90 p-4 shadow-inner shadow-black/20 sm:p-5">
+    <div className="rounded-2xl border border-cine-border bg-cine-input p-4 shadow-inner shadow-black/20 sm:p-5">
       <div className="mb-5 flex items-center justify-between gap-3">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.22em] text-cine-gold">
@@ -112,12 +112,12 @@ export default function DatePicker({ value, onChange, minDate, maxDate }) {
               key={dateKey(day)}
               disabled={disabled}
               onClick={() => selectDate(day)}
-              className={`relative mx-auto flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold transition sm:h-10 sm:w-10 ${
+              className={`cine-calendar-day relative mx-auto flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold transition sm:h-10 sm:w-10 ${
                 selected
                   ? "bg-cine-gold text-black shadow-[0_0_0_4px_rgba(245,190,66,0.12)]"
                   : disabled || outsideMonth
                     ? "text-slate-700"
-                    : "text-slate-300 hover:bg-white/10 hover:text-white"
+                    : "text-slate-300"
               }`}
             >
               {day.getDate()}

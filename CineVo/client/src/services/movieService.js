@@ -13,4 +13,9 @@ export const movieService = {
   season: (id, s) => api.get(`/movies/tv/${id}/seasons/${s}`),
   similar: (type, id) => api.get(`/movies/${type}/${id}/similar`),
   collection: (id) => api.get(`/movies/collection/${id}`),
+  person: (id) =>
+    Promise.all([
+      api.get(`/movies/person/${id}`),
+      api.get(`/movies/person/${id}/combined_credits`),
+    ]),
 };

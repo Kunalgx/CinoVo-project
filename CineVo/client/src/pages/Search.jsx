@@ -49,13 +49,14 @@ export default function Search() {
       ) : type === "person" ? (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {data.map((p) => (
-            <div
+            <button
               key={p.id}
+              onClick={() => nav(`/person/${p.id}`)}
               className="rounded-xl border border-cine-border bg-cine-panel p-3"
             >
               <b>{p.name}</b>
               <p className="text-xs text-slate-500">{p.known_for_department}</p>
-            </div>
+            </button>
           ))}
         </div>
       ) : (

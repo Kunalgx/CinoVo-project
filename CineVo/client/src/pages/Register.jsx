@@ -67,7 +67,7 @@ export default function Register() {
         </button>
         <p className="text-center text-sm text-slate-400">
           Already have an account?{" "}
-          <Link to="/login" className="text-white underline">
+          <Link to="/login" className="cine-surface-link underline">
             Login
           </Link>
         </p>

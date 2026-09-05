@@ -6,3 +6,8 @@ export const profileSchema = z.object({
     password: z.string().min(8).max(100).optional(),
   }),
 });
+export const avatarSchema = z.object({
+  body: z.object({
+    avatar: z.string().url().or(z.literal("")),
+  }),
+});

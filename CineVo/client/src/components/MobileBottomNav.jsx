@@ -1,10 +1,11 @@
 import { NavLink, useLocation } from "react-router-dom";
+import { CalendarHeart, Home, Search, Sparkles } from "lucide-react";
 
 const items = [
-  ["/", "⌂", "Home"],
-  ["/search", "⌕", "Search"],
-  ["/timeline", "◈", "Watch Journey"],
-  ["/random", "✦", "Pick for Me"],
+  ["/", Home, "Home"],
+  ["/search", Search, "Search"],
+  ["/timeline", CalendarHeart, "Watch Journey"],
+  ["/random", Sparkles, "Pick for Me"],
 ];
 
 export default function MobileBottomNav() {
@@ -13,14 +14,14 @@ export default function MobileBottomNav() {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-[#0d1119]/95 px-2 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 shadow-2xl backdrop-blur-xl md:hidden">
       <div className="mx-auto grid max-w-lg grid-cols-4 gap-1">
-        {items.map(([to, icon, label]) => (
+        {items.map(([to, Icon, label]) => (
           <NavLink
             key={to}
             to={to}
             end={to === "/"}
             className={({ isActive }) => `flex min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-1.5 text-[10px] font-bold transition ${isActive ? "bg-cine-gold/15 text-cine-gold" : "text-slate-500 hover:text-slate-200"}`}
           >
-            <span className="text-lg leading-none">{icon}</span>
+            <Icon size={18} aria-hidden="true" />
             <span className="truncate">{label}</span>
           </NavLink>
         ))}

@@ -42,7 +42,7 @@ export default function Login() {
       </p>
       <p className="text-center text-sm text-slate-400">
         New here?{" "}
-        <Link to="/register" className="text-white underline">
+        <Link to="/register" className="cine-surface-link underline">
           Create an account
         </Link>
       </p>

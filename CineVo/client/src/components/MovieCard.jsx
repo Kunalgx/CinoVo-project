@@ -1,4 +1,5 @@
 import { img, titleOf, dateOf, year } from "../utils/tmdb";
+import { CalendarDays, CheckCircle2, CircleCheck, Eye } from "lucide-react";
 export default function MovieCard({
   item,
   onDetails,
@@ -10,7 +11,7 @@ export default function MovieCard({
   const type = item.media_type || (item.first_air_date ? "tv" : "movie");
   const title = titleOf(item) || "Untitled";
   return (
-    <article className="group flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-cine-border bg-cine-card transition duration-200 hover:-translate-y-1 hover:border-slate-500">
+    <article className="group flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-cine-border bg-cine-card shadow-[var(--cine-shadow)] transition duration-200 hover:-translate-y-1 hover:scale-[1.01] hover:border-cine-gold/50">
       <button
         className="block w-full min-w-0 flex-1 text-left"
         onClick={() => onDetails(item.id, type)}
@@ -22,7 +23,7 @@ export default function MovieCard({
             className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.03]"
             loading="lazy"
           />
-          <span className="absolute left-2 top-2 rounded-md bg-black/75 px-2 py-1 text-[9px] font-extrabold tracking-wide">
+          <span className="absolute left-2 top-2 rounded-md bg-black/75 px-2 py-1 text-[9px] font-extrabold tracking-wide text-white">
             {type === "tv" ? "TV SHOW" : "MOVIE"}
           </span>
         </div>
@@ -41,23 +42,26 @@ export default function MovieCard({
       <div className="flex items-center gap-1.5 px-3 pb-3">
         <button
           onClick={() => onDetails(item.id, type)}
-          className="min-w-0 flex-1 rounded-lg bg-slate-100 px-2 py-2 text-[10px] font-extrabold text-black transition hover:bg-white"
+          title="Open details"
+          className="min-w-0 flex-1 rounded-lg border border-transparent bg-white px-2 py-2 text-[10px] font-extrabold text-black transition duration-200 hover:-translate-y-0.5 hover:border-cine-gold hover:bg-cine-gold hover:shadow-[0_0_18px_rgba(245,197,24,0.2)]"
         >
-          DETAILS
+          <span className="inline-flex items-center justify-center gap-1"><Eye size={13} />DETAILS</span>
         </button>
         <button
           onClick={() => onWatched?.(item, type)}
           aria-label={watched ? "Watched" : "Mark watched"}
-          className={`h-8 w-8 flex-none rounded-lg text-xs font-black ${watched ? "bg-cine-gold text-black" : "bg-slate-100 text-black"}`}
+          title={watched ? "Watched - click to unwatch" : "Mark watched"}
+          className={`h-8 w-8 flex-none rounded-lg border text-xs font-black transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_16px_rgba(245,197,24,0.22)] ${watched ? "border-cine-gold bg-cine-gold text-black" : "border-cine-border bg-cine-panel text-cine-muted hover:border-cine-gold/70 hover:text-cine-gold"}`}
         >
-          {watched ? "✓" : "○"}
+          {watched ? <CircleCheck size={16} /> : <CheckCircle2 size={16} />}
         </button>
         <button
           onClick={() => onScheduled?.(item, type)}
           aria-label={scheduled ? "Scheduled" : "Schedule"}
-          className={`h-8 w-8 flex-none rounded-lg text-xs ${scheduled ? "bg-cine-accent text-white" : "bg-slate-100 text-black"}`}
+          title={scheduled ? "Scheduled - click to remove" : "Schedule"}
+          className={`h-8 w-8 flex-none rounded-lg border text-xs transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_16px_rgba(229,107,85,0.22)] ${scheduled ? "border-cine-accent bg-cine-accent text-white" : "border-cine-border bg-cine-panel text-cine-muted hover:border-cine-accent/70 hover:text-cine-accent"}`}
         >
-          {scheduled ? "✓" : "⌚"}
+          <CalendarDays size={16} />
         </button>
       </div>
     </article>

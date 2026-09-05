@@ -41,7 +41,7 @@ export default function TrendingSection({ onDetails }) {
     );
   const x = data[i];
   return (
-    <div className="relative min-h-[390px] overflow-hidden rounded-2xl border border-cine-border bg-cine-panel shadow-2xl">
+    <div className="cine-hero relative min-h-[390px] overflow-hidden rounded-2xl border border-cine-border bg-cine-panel shadow-2xl">
       <img
         src={img(x.backdrop_path, "original")}
         className="absolute right-0 h-full w-1/2 object-cover"

@@ -13,6 +13,7 @@ import Search from "./pages/Search";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import MobileBottomNav from "./components/MobileBottomNav";
+import PersonDetails from "./pages/PersonDetails";
 export default function App() {
   return (
     <>
@@ -25,6 +26,7 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/register" element={<Register />} />
         <Route path="/search" element={<Search />} />
+        <Route path="/person/:id" element={<PersonDetails />} />
         <Route path="/movie/:id" element={<Details type="movie" />} />
         <Route path="/tv/:id" element={<Details type="tv" />} />
         <Route path="/random" element={<RandomPicker />} />

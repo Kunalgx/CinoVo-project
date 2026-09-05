@@ -130,4 +130,6 @@ export const tmdbService = {
   season: (id, season) => request(`/tv/${id}/season/${season}`),
   similar: (type, id) => request(`/${type}/${id}/similar`, { page: 1 }),
   collection: (id) => request(`/collection/${id}`),
+  person: (id) => request(`/person/${id}`),
+  personCredits: (id) => request(`/person/${id}/combined_credits`),
 };

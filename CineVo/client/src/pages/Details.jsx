@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { movieService } from "../services/movieService";
 import { userService } from "../services/userService";
 import { useAuth } from "../context/AuthContext";
@@ -10,6 +10,7 @@ import Loading from "../components/Loading";
 import Modal from "../components/Modal";
 import MovieGrid from "../components/MovieGrid";
 import DatePicker from "../components/DatePicker";
+import { ArrowLeft } from "lucide-react";
 
 const today = () => new Date().toISOString().slice(0, 10);
 const episodeMatches = (item, showId, episode) =>
@@ -21,6 +22,7 @@ const episodeMatches = (item, showId, episode) =>
 export default function Details({ type }) {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
   const [region, setRegion] = useState(getRegion);
   const [movie, setMovie] = useState(null);
@@ -29,11 +31,14 @@ export default function Details({ type }) {
   const [seasonNumber, setSeasonNumber] = useState(0);
   const [watchedEpisodes, setWatchedEpisodes] = useState([]);
   const [scheduledEpisodes, setScheduledEpisodes] = useState([]);
+  const [watchedTitle, setWatchedTitle] = useState(false);
+  const [scheduledTitle, setScheduledTitle] = useState(false);
   const [error, setError] = useState("");
   const [seasonError, setSeasonError] = useState("");
   const [action, setAction] = useState(null);
   const [date, setDate] = useState(today);
   const [dateError, setDateError] = useState("");
+  const goBack = () => navigate(location.key === "default" ? "/" : -1);
 
   useEffect(() => {
     const onRegionChange = (event) => setRegion(event.detail || getRegion());
@@ -77,15 +82,20 @@ export default function Details({ type }) {
     if (!user || type !== "tv") {
       setWatchedEpisodes([]);
       setScheduledEpisodes([]);
+      setWatchedTitle(false);
+      setScheduledTitle(false);
       return undefined;
     }
     let active = true;
     Promise.all([userService.watched(), userService.scheduled()])
       .then(([watched, scheduled]) => {
         if (!active) return;
-        const items = (response) => (Array.isArray(response.data.items) ? response.data.items : []).filter((item) => item.tmdbId === Number(id) && item.mediaType === "tv" && item.episode);
-        setWatchedEpisodes(items(watched));
-        setScheduledEpisodes(items(scheduled));
+        const items = (response) => (Array.isArray(response.data.items) ? response.data.items : []).filter((item) => item.tmdbId === Number(id) && item.mediaType === type);
+        const episodes = (response) => items(response).filter((item) => item.episode);
+        setWatchedEpisodes(episodes(watched));
+        setScheduledEpisodes(episodes(scheduled));
+        setWatchedTitle(items(watched).some((item) => !item.episode));
+        setScheduledTitle(items(scheduled).some((item) => !item.episode));
       })
       .catch(() => { if (active) { setWatchedEpisodes([]); setScheduledEpisodes([]); } });
     return () => { active = false; };
@@ -115,8 +125,13 @@ export default function Details({ type }) {
         const items = (response.data.items || []).filter((item) => item.tmdbId === Number(id) && item.mediaType === "tv" && item.episode);
         if (action.mode === "watched") setWatchedEpisodes(items);
         else setScheduledEpisodes(items);
-      } else if (action.mode === "watched") await userService.addWatched(payload);
-      else await userService.addScheduled(payload);
+      } else if (action.mode === "watched") {
+        await userService.addWatched(payload);
+        setWatchedTitle(true);
+      } else {
+        await userService.addScheduled(payload);
+        setScheduledTitle(true);
+      }
       setAction(null);
     } catch (saveError) {
       setDateError(saveError.response?.data?.message || "Could not save this item.");
@@ -154,11 +169,13 @@ export default function Details({ type }) {
 
   return (
     <main className="pb-12">
-      <button onClick={() => navigate(-1)} className="fixed left-4 top-20 z-20 inline-flex items-center gap-2 rounded-lg border border-white/15 bg-black/70 px-3 py-2 text-sm font-bold text-slate-200 shadow-lg backdrop-blur transition hover:border-cine-gold/60 hover:bg-[#151922] hover:text-white active:scale-95"><span aria-hidden="true" className="text-lg leading-none">←</span>Back</button>
+      <div className="relative z-10 mx-auto max-w-6xl px-5 pt-4 sm:pt-6">
+        <button onClick={goBack} className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-white/15 bg-black/70 px-3 py-2 text-sm font-bold text-slate-200 shadow-lg backdrop-blur transition hover:border-cine-gold/60 hover:bg-[#151922] hover:text-white active:scale-95"><ArrowLeft size={16} aria-hidden="true" />Back</button>
+      </div>
       <section className="relative overflow-hidden border-b border-cine-border">
         <img src={img(movie.backdrop_path, "original")} alt="" className="absolute inset-0 h-full w-full object-cover opacity-25" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#090b10]/30 via-[#090b10]/75 to-[#090b10]" />
-        <div className="relative mx-auto grid max-w-6xl gap-7 px-5 pb-10 pt-32 sm:grid-cols-[190px_1fr] sm:items-end sm:pt-36 lg:grid-cols-[230px_1fr] lg:gap-10">
+        <div className="relative mx-auto grid max-w-6xl gap-7 px-5 pb-10 pt-8 sm:grid-cols-[190px_1fr] sm:items-end sm:pt-10 lg:grid-cols-[230px_1fr] lg:gap-10">
           <img src={img(movie.poster_path)} alt={title} className="mx-auto w-44 rounded-2xl shadow-2xl sm:mx-0 sm:w-full" />
           <div className="min-w-0"><p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-cine-accent">{type === "tv" ? "TV SHOW" : "MOVIE"} · {year(movie)}</p><h1 className="max-w-4xl text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">{title}</h1><p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300 sm:text-base">{movie.overview || "No overview available."}</p><div className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs text-slate-400"><span>{formatDate(dateOf(movie))}</span><span>Rating {Number(movie.vote_average || 0).toFixed(1)}</span>{type === "tv" && <span>{movie.number_of_seasons || 0} seasons</span>}</div><div className="mt-6 flex flex-wrap gap-2"><button onClick={() => openAction("watched")} className="rounded-lg bg-white px-4 py-2.5 text-sm font-black text-black">Mark watched</button><button onClick={() => openAction("scheduled")} className="rounded-lg border border-white/20 px-4 py-2.5 text-sm font-black">Schedule</button></div></div>
         </div>
@@ -166,9 +183,9 @@ export default function Details({ type }) {
 
       <div className="mx-auto grid max-w-6xl gap-8 px-5 py-9 lg:grid-cols-[minmax(0,1fr)_280px]">
         <div className="min-w-0 space-y-9">
-          <section><h2 className="mb-4 text-xl font-black">Cast</h2><div className="flex gap-4 overflow-x-auto pb-2">{(movie.credits?.cast || []).slice(0, 12).map((person) => <div key={person.id} className="w-24 flex-none text-center"><img src={img(person.profile_path, "w185")} alt={person.name} className="h-32 w-24 rounded-xl object-cover" /><p className="mt-2 truncate text-xs text-slate-300">{person.name}</p></div>)}</div></section>
+          <section><h2 className="mb-4 text-xl font-black">Cast</h2><div className="flex gap-3 overflow-x-auto pb-2">{(movie.credits?.cast || []).slice(0, 12).map((person) => <button key={person.id} onClick={() => navigate(`/person/${person.id}`)} className="group w-24 flex-none text-center"><img src={img(person.profile_path, "w185")} alt={person.name} className="h-32 w-24 rounded-xl object-cover transition duration-200 group-hover:scale-[1.03] group-hover:ring-2 group-hover:ring-cine-gold/70" /><p className="cine-surface-link mt-2 truncate text-xs">{person.name}</p></button>)}</div></section>
           <section className="rounded-2xl border border-cine-border bg-cine-panel p-4 sm:p-5"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-cine-accent">Watch providers</p><h2 className="mt-1 text-xl font-black">Available on</h2></div><span className="rounded-full border border-cine-border px-3 py-1 text-xs text-slate-400">Region: {region}</span></div>{providers.length ? <div className="mt-5 grid gap-3 sm:grid-cols-2">{providers.map((provider) => <div key={`${provider.provider_id}-${provider.availabilityType}`} className="flex min-w-0 items-center gap-3 rounded-xl border border-cine-border bg-[#151a23] p-3"><img src={img(provider.logo_path, "w92")} alt="" className="h-11 w-11 flex-none rounded-lg object-cover" /><div className="min-w-0"><p className="truncate text-sm font-bold">{provider.provider_name}</p><p className="mt-1 text-[10px] font-black uppercase tracking-wider text-slate-500">{provider.availabilityType}</p></div></div>)}</div> : <p className="mt-5 text-sm text-slate-400">No providers listed for {region}.</p>}</section>
-          {type === "tv" && <section className="rounded-2xl border border-cine-border bg-cine-panel p-4 sm:p-5"><div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-cine-accent">Series guide</p><h2 className="mt-1 text-xl font-black">Seasons & episodes</h2></div><div className="mt-5 flex gap-2 overflow-x-auto border-b border-cine-border pb-2">{(movie.seasons || []).filter((item) => item.season_number > 0).map((item) => <button key={item.id} onClick={() => setSeasonNumber(item.season_number)} className={`flex-none rounded-lg px-4 py-2 text-sm font-black transition ${seasonNumber === item.season_number ? "bg-cine-gold text-black" : "border border-cine-border bg-[#151a23] text-slate-300 hover:border-slate-500"}`}>Season {item.season_number}</button>)}</div>{seasonError && <p className="mt-4 text-sm text-red-300">{seasonError}</p>}{!season && !seasonError ? <Loading text="Loading episodes..." /> : season?.episodes?.length ? <div className="mt-5 grid gap-4 md:grid-cols-2">{season.episodes.map((episode) => <EpisodeCard key={episode.id} episode={episode} watched={watchedEpisodes} scheduled={scheduledEpisodes} onToggle={toggleEpisode} />)}</div> : <p className="mt-5 text-sm text-slate-400">No episodes found for this season.</p>}</section>}
+          {type === "tv" && <section className="rounded-2xl border border-cine-border bg-cine-panel p-4 sm:p-5"><div><p className="text-[10px] font-black uppercase tracking-[0.2em] text-cine-accent">Series guide</p><h2 className="mt-1 text-xl font-black">Seasons & episodes</h2></div><div className="mt-5 flex gap-2 overflow-x-auto border-b border-cine-border pb-2">{(movie.seasons || []).filter((item) => item.season_number > 0).map((item) => <button key={item.id} onClick={() => setSeasonNumber(item.season_number)} className={`flex-none rounded-lg px-4 py-2 text-sm font-black transition ${seasonNumber === item.season_number ? "bg-cine-gold text-black" : "border border-cine-border bg-cine-card text-slate-300 hover:border-slate-500"}`}>Season {item.season_number}</button>)}</div>{seasonError && <p className="mt-4 text-sm text-red-300">{seasonError}</p>}{!season && !seasonError ? <Loading text="Loading episodes..." /> : season?.episodes?.length ? <div className="mt-5 grid gap-4 md:grid-cols-2">{season.episodes.map((episode) => <EpisodeCard key={episode.id} episode={episode} watched={watchedEpisodes} scheduled={scheduledEpisodes} onToggle={toggleEpisode} />)}</div> : <p className="mt-5 text-sm text-slate-400">No episodes found for this season.</p>}</section>}
         </div>
         <aside className="h-fit rounded-2xl border border-cine-border bg-cine-panel p-5 lg:sticky lg:top-24"><h2 className="mb-4 text-xl font-black">Details</h2><dl className="space-y-4 text-sm"><div><dt className="text-xs uppercase tracking-wider text-slate-500">Genres</dt><dd className="mt-1 text-slate-300">{(movie.genres || []).map((genre) => genre.name).join(", ") || "Unknown"}</dd></div><div><dt className="text-xs uppercase tracking-wider text-slate-500">Runtime</dt><dd className="mt-1 text-slate-300">{movie.runtime ? `${movie.runtime} minutes` : movie.episode_run_time?.[0] ? `${movie.episode_run_time[0]} minutes` : "Unknown"}</dd></div>{movie.status && <div><dt className="text-xs uppercase tracking-wider text-slate-500">Status</dt><dd className="mt-1 text-slate-300">{movie.status}</dd></div>}</dl></aside>
       </div>
@@ -194,5 +211,5 @@ export default function Details({ type }) {
 function EpisodeCard({ episode, watched, scheduled, onToggle }) {
   const watchedItem = watched.find((item) => item.episode?.season === episode.season_number && item.episode?.number === episode.episode_number);
   const scheduledItem = scheduled.find((item) => item.episode?.season === episode.season_number && item.episode?.number === episode.episode_number);
-  return <article className="grid min-h-[152px] grid-cols-[140px_minmax(0,1fr)] gap-4 rounded-xl border border-cine-border bg-[#151a23] p-3 sm:grid-cols-[155px_minmax(0,1fr)]"><img src={img(episode.still_path, "w300")} alt="" className="h-[126px] w-[140px] rounded-lg object-cover sm:h-[132px] sm:w-[155px]" /><div className="flex min-w-0 flex-col"><div className="min-w-0"><p className="text-[10px] font-black uppercase tracking-wider text-cine-accent">Episode {episode.episode_number}</p><h3 className="mt-1 line-clamp-2 text-sm font-bold leading-5">{episode.name || "Untitled episode"}</h3><div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-slate-400"><span>★ {Number(episode.vote_average || 0).toFixed(1)}</span>{episode.air_date && <span>{formatDate(episode.air_date)}</span>}{episode.runtime ? <span>{episode.runtime} min</span> : null}</div><p className="mt-2 line-clamp-2 text-[11px] leading-4 text-slate-400">{episode.overview || "No episode description available."}</p></div><div className="mt-auto flex flex-wrap gap-2 pt-3"><button onClick={() => onToggle("watched", episode)} className={`rounded-lg px-2.5 py-1.5 text-[10px] font-black ${watchedItem ? "bg-cine-gold text-black" : "border border-cine-border text-slate-200"}`}>{watchedItem ? "Mark Unwatched" : "Mark Watched"}</button><button onClick={() => onToggle("scheduled", episode)} className={`rounded-lg px-2.5 py-1.5 text-[10px] font-black ${scheduledItem ? "bg-cine-accent text-white" : "border border-cine-border text-slate-200"}`}>{scheduledItem ? "Scheduled" : "Schedule"}</button></div></div></article>;
+  return <article className="grid min-h-[152px] grid-cols-[140px_minmax(0,1fr)] gap-4 rounded-xl border border-cine-border bg-cine-card p-3 sm:grid-cols-[155px_minmax(0,1fr)]"><img src={img(episode.still_path, "w300")} alt="" className="h-[126px] w-[140px] rounded-lg object-cover sm:h-[132px] sm:w-[155px]" /><div className="flex min-w-0 flex-col"><div className="min-w-0"><p className="text-[10px] font-black uppercase tracking-wider text-cine-accent">Episode {episode.episode_number}</p><h3 className="mt-1 line-clamp-2 text-sm font-bold leading-5">{episode.name || "Untitled episode"}</h3><div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-slate-400"><span>★ {Number(episode.vote_average || 0).toFixed(1)}</span>{episode.air_date && <span>{formatDate(episode.air_date)}</span>}{episode.runtime ? <span>{episode.runtime} min</span> : null}</div><p className="mt-2 line-clamp-2 text-[11px] leading-4 text-slate-400">{episode.overview || "No episode description available."}</p></div><div className="mt-auto flex flex-wrap gap-2 pt-3"><button onClick={() => onToggle("watched", episode)} className={`rounded-lg px-2.5 py-1.5 text-[10px] font-black ${watchedItem ? "bg-cine-gold text-black" : "border border-cine-border text-slate-200"}`}>{watchedItem ? "Mark Unwatched" : "Mark Watched"}</button><button onClick={() => onToggle("scheduled", episode)} className={`rounded-lg px-2.5 py-1.5 text-[10px] font-black ${scheduledItem ? "bg-cine-accent text-white" : "border border-cine-border text-slate-200"}`}>{scheduledItem ? "Scheduled" : "Schedule"}</button></div></div></article>;
 }

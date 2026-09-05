@@ -4,12 +4,14 @@ export default {
     extend: {
       colors: {
         cine: {
-          bg: "#090b10",
-          panel: "#11141b",
-          card: "#141820",
-          border: "#252b36",
-          muted: "#9299a6",
+          bg: "var(--cine-bg)",
+          panel: "var(--cine-panel)",
+          card: "var(--cine-card)",
+          border: "var(--cine-border)",
+          muted: "var(--cine-muted)",
           gold: "#f5c518",
+          accent: "#e56b55",
+          input: "var(--cine-input)",
         },
       },
     },

@@ -130,19 +130,19 @@ export default function FilterBar({ filters, setFilters, onApply }) {
           <div key={key} className="relative">
             <button
               onClick={() => setMenu(menu === key ? null : key)}
-              className="flex w-full items-center justify-between rounded-lg border border-cine-border bg-[#181c25] px-3 py-2 text-xs"
+              className="cine-filter-control flex w-full items-center justify-between rounded-lg border border-cine-border bg-cine-input px-3 py-2 text-xs"
             >
               {label(key)}
               <span>⌄</span>
             </button>
             {menu === key && (
-              <div className="absolute z-30 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-cine-border bg-[#161a22] p-1 shadow-2xl">
+              <div className="absolute z-30 mt-1 max-h-72 w-full overflow-auto rounded-xl border border-cine-border bg-cine-panel p-1 shadow-2xl">
                 {(key === "year" ? years : options(key)).map(
                   ([value, text]) => (
                     <button
                       key={value}
                       onClick={() => choose(key, value || (key === "region" ? getRegion() : value))}
-                      className="block w-full rounded-lg px-2.5 py-2 text-left text-xs hover:bg-slate-700"
+                      className="cine-filter-control block w-full rounded-lg px-2.5 py-2 text-left text-xs"
                     >
                       {text}
                     </button>

@@ -8,6 +8,8 @@ r.get("/discover", asyncHandler(c.discover));
 r.get("/search", asyncHandler(c.search));
 r.get("/search/:type", asyncHandler(c.searchTyped));
 r.get("/collection/:id", asyncHandler(c.collection));
+r.get("/person/:id", asyncHandler(c.person));
+r.get("/person/:id/combined_credits", asyncHandler(c.personCredits));
 r.get("/:type/:id/credits", asyncHandler(c.credits));
 r.get("/:type/:id/providers", asyncHandler(c.providers));
 r.get("/:type/:id/seasons/:season", asyncHandler(c.season));

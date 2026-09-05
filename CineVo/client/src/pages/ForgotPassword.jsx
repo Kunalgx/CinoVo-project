@@ -31,7 +31,7 @@ export default function ForgotPassword() {
         {message && <div className="rounded-lg bg-emerald-500/10 p-3 text-sm text-emerald-300">{message}</div>}
         <input type="email" required autoComplete="email" placeholder="Email address" value={email} onChange={(event) => setEmail(event.target.value)} className="w-full rounded-xl border border-cine-border bg-slate-900 p-3 outline-none focus:border-cine-gold" />
         <button disabled={busy} className="w-full rounded-xl bg-cine-gold py-3 font-black text-black disabled:opacity-50">{busy ? "SENDING..." : "SEND RESET LINK"}</button>
-        <p className="text-center text-sm text-slate-400"><Link to="/login" className="text-white hover:underline">Back to login</Link></p>
+        <p className="text-center text-sm text-slate-400"><Link to="/login" className="cine-surface-link hover:underline">Back to login</Link></p>
       </form>
     </main>
   );

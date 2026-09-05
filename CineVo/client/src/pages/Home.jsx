@@ -72,6 +72,21 @@ export default function Home() {
       nav("/login");
       return;
     }
+    const alreadySaved = action === "watched" ? isW(x, type) : isS(x, type);
+    if (alreadySaved) {
+      try {
+        if (action === "watched") {
+          await userService.removeWatched(type, x.id);
+          setWatched((await userService.watched()).data.items);
+        } else {
+          await userService.removeScheduled(type, x.id);
+          setScheduled((await userService.scheduled()).data.items);
+        }
+      } catch (removeError) {
+        setError(removeError.response?.data?.message || "Could not update this title.");
+      }
+      return;
+    }
     setDateModal({ action, x, type });
   };
   const confirm = async () => {

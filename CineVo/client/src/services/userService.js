@@ -6,6 +6,8 @@ export const userService = {
     api.post("/user/avatar", f, {
       headers: { "Content-Type": "multipart/form-data" },
     }),
+  imageKitAuth: () => api.get("/imagekit/auth"),
+  updateAvatar: (avatar) => api.patch("/users/profile/avatar", { avatar }),
   watched: () => api.get("/watchlist/watched"),
   scheduled: () => api.get("/watchlist/scheduled"),
   timeline: () => api.get("/watchlist/timeline"),
