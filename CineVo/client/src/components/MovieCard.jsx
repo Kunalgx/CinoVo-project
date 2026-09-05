@@ -7,6 +7,8 @@ export default function MovieCard({
   scheduled = false,
   onWatched,
   onScheduled,
+  showWatched = true,
+  showScheduled = true,
 }) {
   const type = item.media_type || (item.first_air_date ? "tv" : "movie");
   const title = titleOf(item) || "Untitled";
@@ -45,24 +47,31 @@ export default function MovieCard({
           title="Open details"
           className="min-w-0 flex-1 rounded-lg border border-transparent bg-white px-2 py-2 text-[10px] font-extrabold text-black transition duration-200 hover:-translate-y-0.5 hover:border-cine-gold hover:bg-cine-gold hover:shadow-[0_0_18px_rgba(245,197,24,0.2)]"
         >
-          <span className="inline-flex items-center justify-center gap-1"><Eye size={13} />DETAILS</span>
+          <span className="inline-flex items-center justify-center gap-1">
+            <Eye size={13} />
+            DETAILS
+          </span>
         </button>
-        <button
-          onClick={() => onWatched?.(item, type)}
-          aria-label={watched ? "Watched" : "Mark watched"}
-          title={watched ? "Watched - click to unwatch" : "Mark watched"}
-          className={`h-8 w-8 flex-none rounded-lg border text-xs font-black transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_16px_rgba(245,197,24,0.22)] ${watched ? "border-cine-gold bg-cine-gold text-black" : "border-cine-border bg-cine-panel text-cine-muted hover:border-cine-gold/70 hover:text-cine-gold"}`}
-        >
-          {watched ? <CircleCheck size={16} /> : <CheckCircle2 size={16} />}
-        </button>
-        <button
-          onClick={() => onScheduled?.(item, type)}
-          aria-label={scheduled ? "Scheduled" : "Schedule"}
-          title={scheduled ? "Scheduled - click to remove" : "Schedule"}
-          className={`h-8 w-8 flex-none rounded-lg border text-xs transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_16px_rgba(229,107,85,0.22)] ${scheduled ? "border-cine-accent bg-cine-accent text-white" : "border-cine-border bg-cine-panel text-cine-muted hover:border-cine-accent/70 hover:text-cine-accent"}`}
-        >
-          <CalendarDays size={16} />
-        </button>
+        {showWatched && (
+          <button
+            onClick={() => onWatched?.(item, type)}
+            aria-label={watched ? "Watched" : "Mark watched"}
+            title={watched ? "Watched - click to unwatch" : "Mark watched"}
+            className={`h-8 w-8 flex-none rounded-lg border text-xs font-black transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_16px_rgba(245,197,24,0.22)] ${watched ? "border-cine-gold bg-cine-gold text-black" : "border-cine-border bg-cine-panel text-cine-muted hover:border-cine-gold/70 hover:text-cine-gold"}`}
+          >
+            {watched ? <CircleCheck size={16} /> : <CheckCircle2 size={16} />}
+          </button>
+        )}
+        {showScheduled && (
+          <button
+            onClick={() => onScheduled?.(item, type)}
+            aria-label={scheduled ? "Scheduled" : "Schedule"}
+            title={scheduled ? "Scheduled - click to remove" : "Schedule"}
+            className={`h-8 w-8 flex-none rounded-lg border text-xs transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_0_16px_rgba(229,107,85,0.22)] ${scheduled ? "border-cine-accent bg-cine-accent text-white" : "border-cine-border bg-cine-panel text-cine-muted hover:border-cine-accent/70 hover:text-cine-accent"}`}
+          >
+            <CalendarDays size={16} />
+          </button>
+        )}
       </div>
     </article>
   );

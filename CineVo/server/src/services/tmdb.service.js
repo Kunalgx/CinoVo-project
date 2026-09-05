@@ -121,6 +121,7 @@ export const tmdbService = {
   trending: () => request("/trending/all/day", { page: 1 }),
   discover: (type, params) =>
     request(type === "tv" ? "/discover/tv" : "/discover/movie", params),
+  genres: (type) => request(`/genre/${type}/list`),
   search: (params) => request("/search/multi", params),
   searchTyped: (type, params) => request(`/search/${type}`, params),
   details: (type, id) => request(`/${type}/${id}`),

@@ -1,11 +1,14 @@
 import "dotenv/config";
 import app from "./app.js";
 import { connectDB } from "./config/db.js";
+import { seedAudioAvailability } from "./data/audioAvailability.seed.js";
 
 const PORT = process.env.PORT || 5000;
 
 try {
   await connectDB();
+  await seedAudioAvailability();
+
   console.log("MongoDB connected");
   const server = app.listen(PORT, () =>
     console.log(`Server running on http://localhost:${PORT}`),
