@@ -17,7 +17,7 @@ export async function getStreamingAvailability(
     );
   }
 
-  const showType = type === "tv" ? "series" : "movie";
+  const showType = type === "tv" ? "tv" : "movie";
   const id = `${showType}/${tmdbId}`;
 
   const url = new URL(`${BASE_URL}/shows/${id}`);
