@@ -710,7 +710,8 @@ function getAudioApiCode(
 
 /*
  * Extract actual audio languages
- * returned by the live API.
+ * returned by the live API .
+ * Streaming Availability API Documentation
  */
 function getAudioLanguages(
   show,
