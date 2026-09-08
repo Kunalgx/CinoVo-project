@@ -23,24 +23,26 @@ A production-style full-stack refactor of the original single-file CineVo app. T
 
 ## Deployment
 
-Deploy the `server/` directory to a Node.js host with outbound HTTPS access to `api.themoviedb.org:443` and network access to MongoDB Atlas. Set these server environment variables in the host dashboard or secret manager:
+Deploy the repository as one Render Web Service with the project root (`CineVo`) as the Root Directory. Render should use:
+
+```text
+Build Command: npm run install:all && npm run build
+Start Command: npm start --prefix server
+```
+
+Express serves `client/dist` and the backend from the same origin. Set these server environment variables in the Render dashboard or secret manager:
 
 - `PORT` (the platform-provided port, when required)
 - `MONGODB_URI`
 - `JWT_SECRET`
 - `TMDB_API_KEY`
 - `CLIENT_URL` (the deployed React origin)
+- `STREAMING_AVAILABILITY_API_KEY`
 - `TMDB_PROXY` (optional, a trusted private HTTPS proxy URL)
 
 Never put `TMDB_API_KEY`, `MONGODB_URI`, or `JWT_SECRET` in the client environment. After deployment, check `/api/health` and `/api/movies/tmdb-health`. A healthy TMDB response reports `status: "reachable"`; local network restrictions do not indicate a code or key failure.
 
-For the deployed frontend, set `client/.env` before building:
-
-```text
-VITE_API_URL=https://your-api-host.example.com/api
-```
-
-Then run `npm run build` in `client/` and deploy `client/dist/` to a static host. Set the backend `CLIENT_URL` to the exact frontend origin so credentialed requests and authentication cookies are accepted.
+The production client uses `/api` automatically. Do not place backend secrets in `client/.env` or any `VITE_*` variable.
 
 ## Security
 

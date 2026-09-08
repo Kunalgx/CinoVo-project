@@ -4,7 +4,9 @@
   "scripts": {
     "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
     "install:all": "npm install && npm --prefix server install && npm --prefix client install",
+    "start": "npm start --prefix server",
     "format": "prettier --write \"client/src/**/*.{js,jsx,css}\" \"server/src/**/*.js\" \"package.json\" \"client/package.json\" \"server/package.json\" \"client/*.js\"",
+    "build": "npm run build --prefix client",
     "format:check": "prettier --check \"client/src/**/*.{js,jsx,css}\" \"server/src/**/*.js\" \"package.json\" \"client/package.json\" \"server/package.json\" \"client/*.js\""
   },
   "devDependencies": {

@@ -15,7 +15,18 @@ import { notFound, errorHandler } from "./middleware/error.middleware.js";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
-app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
+const allowedOrigins = new Set(
+  ["http://localhost:5173", "http://localhost:5174", process.env.CLIENT_URL].filter(Boolean),
+);
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.has(origin)) return callback(null, true);
+      return callback(new Error("Origin not allowed by CORS"));
+    },
+    credentials: true,
+  }),
+);
 app.use(express.json({ limit: "1mb" }));
 app.use(cookieParser());
 app.use("/uploads", express.static(path.resolve(__dirname, "../../uploads")));
@@ -25,12 +36,6 @@ const authLimiter = rateLimit({
   max: 50,
   standardHeaders: true,
   legacyHeaders: false,
-});
-app.get("/cinevo-deploy-check", (req, res) => {
-  res.json({
-    success: true,
-    message: "CineVo production server is running",
-  });
 });
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
@@ -43,6 +48,16 @@ app.use("/api/imagekit", imagekitRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/watchmode", watchmodeRoutes);
 app.use("/api/watchlist", watchRoutes);
+const clientDistPath = path.resolve(__dirname, "../../client/dist");
+
+app.use(express.static(clientDistPath));
+
+app.use((req, res, next) => {
+  if (req.path === "/api" || req.path.startsWith("/api/") || req.method !== "GET") {
+    return next();
+  }
+  return res.sendFile(path.join(clientDistPath, "index.html"));
+});
 app.use(notFound);
 app.use(errorHandler);
 export default app;
