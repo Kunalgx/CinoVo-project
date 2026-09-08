@@ -4,6 +4,12 @@ import { connectDB } from "./config/db.js";
 import { seedAudioAvailability } from "./data/audioAvailability.seed.js";
 
 const PORT = process.env.PORT || 5000;
+app.get("/server-direct-check", (req, res) => {
+  res.json({
+    success: true,
+    message: "server.js is receiving requests",
+  });
+});
 
 try {
   await connectDB();
