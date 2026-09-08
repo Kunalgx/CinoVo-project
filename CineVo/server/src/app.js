@@ -26,6 +26,12 @@ const authLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+app.get("/cinevo-deploy-check", (req, res) => {
+  res.json({
+    success: true,
+    message: "CineVo production server is running",
+  });
+});
 app.use("/api/auth/login", authLimiter);
 app.use("/api/auth/register", authLimiter);
 app.use("/api/auth/forgot-password", authLimiter);
