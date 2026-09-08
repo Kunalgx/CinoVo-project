@@ -53,9 +53,10 @@ const clientDistPath = path.resolve(__dirname, "../../client/dist");
 app.use(express.static(clientDistPath));
 
 app.use((req, res, next) => {
-  if (req.path === "/api" || req.path.startsWith("/api/") || req.method !== "GET") {
+  if (req.path.startsWith("/api/")) {
     return next();
   }
+
   return res.sendFile(path.join(clientDistPath, "index.html"));
 });
 app.use(notFound);
