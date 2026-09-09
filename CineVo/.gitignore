@@ -2,7 +2,7 @@ node_modules/
 .env
 .env.*
 !.env.example
-server/public/
+dist/
 client/.env
 server/.env
 uploads/*

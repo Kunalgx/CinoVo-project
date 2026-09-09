@@ -14,7 +14,7 @@ import watchmodeRoutes from "./routes/watchmode.routes.js";
 import { notFound, errorHandler } from "./middleware/error.middleware.js";
 import {
   frontendAssets,
-  frontendPublic,
+  frontendDist,
   uploadsDirectory,
 } from "./config/paths.js";
 
@@ -110,15 +110,15 @@ const assetStaticOptions = {
 
 // Keep asset requests completely separate from API and SPA routing. This is
 // deliberately registered before every catch-all handler: /assets/*.js and
-// /assets/*.css can only be served as files from server/public/assets.
+// /assets/*.css can only be served as files from root/dist/assets.
 app.use("/assets", express.static(frontendAssets, assetStaticOptions));
 app.use("/assets", (req, res) =>
   res.status(404).type("text/plain").send("Frontend asset not found"),
 );
 
-// Other build files (for example favicon.ico) are served from server/public.
+// Other build files (for example favicon.ico) are served from root/dist.
 app.use(
-  express.static(frontendPublic, {
+  express.static(frontendDist, {
     index: false,
     maxAge: "1h",
   }),
@@ -139,7 +139,7 @@ app.get("*", (req, res, next) => {
     return res.status(404).type("text/plain").send("Frontend asset not found");
   }
 
-  return res.sendFile(path.join(frontendPublic, "index.html"), (error) => {
+  return res.sendFile(path.join(frontendDist, "index.html"), (error) => {
     if (error) next(error);
   });
 });

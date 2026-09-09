@@ -6,7 +6,7 @@ const serverDirectory = path.resolve(configDirectory, "../..");
 
 // This is intentionally independent of process.cwd(), which changes when
 // Render runs a package script from the repository root.
-export const frontendPublic = path.join(serverDirectory, "public");
-export const frontendAssets = path.join(frontendPublic, "assets");
 export const projectRoot = path.resolve(serverDirectory, "..");
+export const frontendDist = path.join(projectRoot, "dist");
+export const frontendAssets = path.join(frontendDist, "assets");
 export const uploadsDirectory = path.join(projectRoot, "uploads");

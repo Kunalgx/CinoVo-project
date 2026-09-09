@@ -11,13 +11,13 @@ dotenv.config({ path: path.resolve(serverDirectory, "../.env") });
 const { default: app } = await import("./app.js");
 const { connectDB } = await import("./config/db.js");
 const { seedAudioAvailability } = await import("./data/audioAvailability.seed.js");
-const { frontendPublic } = await import("./config/paths.js");
+const { frontendDist } = await import("./config/paths.js");
 
 const PORT = process.env.PORT || 5000;
 
 
 try {
-  const frontendEntry = path.join(frontendPublic, "index.html");
+  const frontendEntry = path.join(frontendDist, "index.html");
   if (!existsSync(frontendEntry)) {
     throw new Error(
       `Frontend build is missing: expected ${frontendEntry}. Run npm run build before npm start.`,
@@ -28,7 +28,7 @@ try {
   await seedAudioAvailability();
 
   console.log("MongoDB connected");
-  console.log(`Serving frontend from ${frontendPublic}`);
+  console.log(`Serving frontend from ${frontendDist}`);
   const server = app.listen(PORT,"0.0.0.0", () =>
     console.log(`Server running on http://localhost:${PORT}`),
   );

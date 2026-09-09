@@ -13,7 +13,7 @@ export default defineConfig({
   },
   build: {
     // The Express service serves this production build directly.
-    outDir: "../server/public",
+    outDir: "../dist",
     emptyOutDir: true,
   },
 });
