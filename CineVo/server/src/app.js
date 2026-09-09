@@ -27,6 +27,7 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'", "https://upload.imagekit.io"],
       },
     },
     crossOriginResourcePolicy: {
