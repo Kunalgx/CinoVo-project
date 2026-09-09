@@ -5,4 +5,5 @@ const serverSrcDirectory = path.dirname(fileURLToPath(import.meta.url));
 
 export const projectRoot = path.resolve(serverSrcDirectory, "../../..");
 export const frontendDist = path.join(projectRoot, "dist");
+export const frontendAssets = path.join(frontendDist, "assets");
 export const uploadsDirectory = path.join(projectRoot, "uploads");

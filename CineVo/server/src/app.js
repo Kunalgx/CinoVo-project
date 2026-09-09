@@ -12,7 +12,11 @@ import watchRoutes from "./routes/watchlist.routes.js";
 import imagekitRoutes from "./routes/imagekit.routes.js";
 import watchmodeRoutes from "./routes/watchmode.routes.js";
 import { notFound, errorHandler } from "./middleware/error.middleware.js";
-import { frontendDist, uploadsDirectory } from "./config/paths.js";
+import {
+  frontendAssets,
+  frontendDist,
+  uploadsDirectory,
+} from "./config/paths.js";
 
 const app = express();
 
@@ -99,11 +103,24 @@ app.use("/api/watchlist", watchRoutes);
 
 /* ---------------- FRONTEND ---------------- */
 
+const assetStaticOptions = {
+  maxAge: "1y",
+  immutable: true,
+};
+
+// Keep asset requests completely separate from API and SPA routing. This is
+// deliberately registered before every catch-all handler: /assets/*.js and
+// /assets/*.css can only be served as files from root/dist/assets.
+app.use("/assets", express.static(frontendAssets, assetStaticOptions));
+app.use("/assets", (req, res) =>
+  res.status(404).type("text/plain").send("Frontend asset not found"),
+);
+
+// Other build files (for example favicon.ico) are served from root/dist.
 app.use(
   express.static(frontendDist, {
     index: false,
-    maxAge: "1y",
-    immutable: true,
+    maxAge: "1h",
   }),
 );
 
@@ -116,11 +133,10 @@ app.get("*", (req, res, next) => {
     return next();
   }
 
-  // A missing bundle, stylesheet, image, or upload must remain a 404. Sending
-  // index.html (or a JSON API error) for it produces misleading MIME errors and
-  // a blank React page in browsers.
+  // A missing stylesheet/image/script must remain a regular frontend 404.
+  // It must never reach the JSON API error middleware.
   if (path.extname(req.path)) {
-    return next();
+    return res.status(404).type("text/plain").send("Frontend asset not found");
   }
 
   return res.sendFile(path.join(frontendDist, "index.html"), (error) => {
