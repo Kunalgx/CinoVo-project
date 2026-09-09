@@ -12,8 +12,8 @@ export default defineConfig({
     },
   },
   build: {
-    // Keep the production bundle outside client/ so Express can serve one stable path.
-    outDir: "../dist",
+    // The Express service serves this production build directly.
+    outDir: "../server/public",
     emptyOutDir: true,
   },
 });
