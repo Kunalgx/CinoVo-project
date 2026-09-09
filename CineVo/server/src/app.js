@@ -98,7 +98,7 @@ app.use("/api/watchlist", watchRoutes);
 /* ---------------- FRONTEND ---------------- */
 
 // React/Vite production build
-const clientDistPath = path.resolve(process.cwd(), "../client/dist");
+const clientDistPath = path.resolve(__dirname, "../client/dist");
 
 
 // Serve React static files
