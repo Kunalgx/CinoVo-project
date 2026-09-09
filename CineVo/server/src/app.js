@@ -24,6 +24,11 @@ const app = express();
 
 app.use(
   helmet({
+    contentSecurityPolicy: {
+      directives: {
+        imgSrc: ["'self'", "data:", "https:"],
+      },
+    },
     crossOriginResourcePolicy: {
       policy: "cross-origin",
     },
@@ -31,6 +36,14 @@ app.use(
 );
 
 /* ---------------- CORS ---------------- */
+
+const normalizeOrigin = (value) => {
+  try {
+    return value ? new URL(value).origin : null;
+  } catch {
+    return null;
+  }
+};
 
 const allowedOrigins = new Set(
   [
@@ -40,7 +53,9 @@ const allowedOrigins = new Set(
     ...(process.env.NODE_ENV === "production"
       ? []
       : ["http://localhost:5173", "http://localhost:5174"]),
-  ].filter(Boolean)
+  ]
+    .map(normalizeOrigin)
+    .filter(Boolean),
 );
 
 // CORS applies to the API only. Vite's module scripts and stylesheet links may
@@ -48,16 +63,17 @@ const allowedOrigins = new Set(
 // valid /assets requests to throw before express.static could serve them.
 app.use(
   "/api",
-  cors({
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.has(origin)) {
-        return callback(null, true);
-      }
+  cors((req, callback) => {
+    const origin = normalizeOrigin(req.get("origin"));
+    const protocol = req.get("x-forwarded-proto")?.split(",")[0] || req.protocol;
+    const sameOrigin = normalizeOrigin(`${protocol}://${req.get("host")}`);
 
-      return callback(new Error("Origin not allowed by CORS"));
-    },
-    credentials: true,
-  })
+    // Same-origin Render requests must work even if CLIENT_URL was left over
+    // from a previous deployment. Untrusted cross-origin requests simply omit
+    // CORS headers rather than becoming a server-side 500.
+    const permitted = !origin || origin === sameOrigin || allowedOrigins.has(origin);
+    callback(null, { origin: permitted ? origin || true : false, credentials: true });
+  }),
 );
 
 /* ---------------- MIDDLEWARE ---------------- */
