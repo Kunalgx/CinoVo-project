@@ -17,32 +17,39 @@ A production-style full-stack refactor of the original single-file CineVo app. T
 1. Install Node.js 18+ and MongoDB.
 2. Copy `server/.env.example` to `server/.env` and set `MONGODB_URI`, `JWT_SECRET`, `TMDB_API_KEY`, and `CLIENT_URL`. Optionally set `TMDB_PROXY` to a trusted private HTTPS proxy when the deployment host cannot reach TMDB directly.
 3. Copy `client/.env.example` to `client/.env`.
-4. Run `npm install` in the root, then `npm run install:all` (or install each workspace separately).
+4. Run `npm install` in the repository root. The root `package.json` is the
+   single dependency manifest for both the React build and Express runtime.
 5. Start both apps with `npm run dev`.
 6. Client: http://localhost:5173 — API: http://localhost:5000/api/health
 
 ## Deployment
 
-Deploy the repository as one Render Web Service with the project root (`CineVo`) as the Root Directory. Render should use:
+Deploy the repository as one Render Web Service with `CineVo` as the Root
+Directory. Render should use:
 
 ```text
-Build Command: npm run install:all && npm run build
-Start Command: npm start --prefix server
+Build Command: npm install --include=dev && npm run build
+Start Command: npm start
 ```
 
 The frontend build is written to the repository root `dist/` directory. Express serves that directory and the backend from the same origin. Set these server environment variables in the Render dashboard or secret manager:
 
-- `PORT` (the platform-provided port, when required)
 - `MONGODB_URI`
 - `JWT_SECRET`
 - `TMDB_API_KEY`
-- `CLIENT_URL` (the deployed React origin)
 - `STREAMING_AVAILABILITY_API_KEY`
-- `TMDB_PROXY` (optional, a trusted private HTTPS proxy URL)
+- `WATCHMODE_API_KEY` (if Watchmode is enabled)
+- `NODE_ENV=production`
+
+Optional variables: `CLIENT_URL` (the deployed HTTPS service URL; Render's
+`RENDER_EXTERNAL_URL` is used automatically for reset-email links),
+`TMDB_PROXY`, SMTP settings, and ImageKit settings. Do not create `PORT` in
+Render: the service supplies it.
 
 Never put `TMDB_API_KEY`, `MONGODB_URI`, or `JWT_SECRET` in the client environment. After deployment, check `/api/health` and `/api/movies/tmdb-health`. A healthy TMDB response reports `status: "reachable"`; local network restrictions do not indicate a code or key failure.
 
-The production client uses `/api` automatically. Do not place backend secrets in `client/.env` or any `VITE_*` variable.
+The production client uses same-origin `/api` automatically. Do not place
+backend secrets in `client/.env` or any `VITE_*` variable.
 
 ## Security
 

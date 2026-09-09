@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
+import path from "node:path";
 
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
@@ -29,7 +30,9 @@ app.use(
 
 const allowedOrigins = new Set(
   [
-    process.env.CLIENT_URL,
+    // Render supplies this for a Web Service. CLIENT_URL remains useful for a
+    // custom domain or non-Render deployment.
+    process.env.CLIENT_URL || process.env.RENDER_EXTERNAL_URL,
     ...(process.env.NODE_ENV === "production"
       ? []
       : ["http://localhost:5173", "http://localhost:5174"]),
@@ -96,18 +99,33 @@ app.use("/api/watchlist", watchRoutes);
 
 /* ---------------- FRONTEND ---------------- */
 
-app.use(express.static(frontendDist));
+app.use(
+  express.static(frontendDist, {
+    index: false,
+    maxAge: "1y",
+    immutable: true,
+  }),
+);
 
 /* ---------------- REACT SPA FALLBACK ---------------- */
 
 // API requests go to the normal error handler
 // Everything else gets React's index.html
-app.use((req, res, next) => {
+app.get("*", (req, res, next) => {
   if (req.path.startsWith("/api/")) {
     return next();
   }
 
-  return res.sendFile("index.html", { root: frontendDist });
+  // A missing bundle, stylesheet, image, or upload must remain a 404. Sending
+  // index.html (or a JSON API error) for it produces misleading MIME errors and
+  // a blank React page in browsers.
+  if (path.extname(req.path)) {
+    return next();
+  }
+
+  return res.sendFile(path.join(frontendDist, "index.html"), (error) => {
+    if (error) next(error);
+  });
 });
 
 /* ---------------- ERROR HANDLING ---------------- */

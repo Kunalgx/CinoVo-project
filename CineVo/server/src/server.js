@@ -1,7 +1,15 @@
-import "dotenv/config";
-import app from "./app.js";
-import { connectDB } from "./config/db.js";
-import { seedAudioAvailability } from "./data/audioAvailability.seed.js";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import dotenv from "dotenv";
+
+// Load the server environment file regardless of whether this file is started
+// from the repository root (production) or from server/ (local development).
+const serverDirectory = path.dirname(fileURLToPath(import.meta.url));
+dotenv.config({ path: path.resolve(serverDirectory, "../.env") });
+
+const { default: app } = await import("./app.js");
+const { connectDB } = await import("./config/db.js");
+const { seedAudioAvailability } = await import("./data/audioAvailability.seed.js");
 
 const PORT = process.env.PORT || 5000;
 

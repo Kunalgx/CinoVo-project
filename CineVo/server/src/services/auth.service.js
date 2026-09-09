@@ -38,6 +38,7 @@ export async function sendPasswordResetEmail({ email, name, token }) {
   }
   const clientUrl =
     process.env.CLIENT_URL ||
+    process.env.RENDER_EXTERNAL_URL ||
     (process.env.NODE_ENV === "production" ? null : "http://localhost:5173");
   if (!clientUrl) throw new Error("CLIENT_URL is required for password reset emails");
   const resetUrl = `${clientUrl}/reset-password?token=${encodeURIComponent(token)}`;

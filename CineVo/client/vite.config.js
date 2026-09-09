@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
+  // The app is served from the Express service at the domain root in production.
+  base: "/",
   server: {
     proxy: {
       "/api": "http://localhost:5000",
@@ -10,6 +12,7 @@ export default defineConfig({
     },
   },
   build: {
+    // Keep the production bundle outside client/ so Express can serve one stable path.
     outDir: "../dist",
     emptyOutDir: true,
   },
