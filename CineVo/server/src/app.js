@@ -4,7 +4,6 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import path from "path";
-import { fileURLToPath } from "url";
 
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
@@ -14,14 +13,15 @@ import imagekitRoutes from "./routes/imagekit.routes.js";
 import watchmodeRoutes from "./routes/watchmode.routes.js";
 import { notFound, errorHandler } from "./middleware/error.middleware.js";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 
 /* ---------------- SECURITY ---------------- */
 
 app.use(
   helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginResourcePolicy: {
+      policy: "cross-origin",
+    },
   })
 );
 
@@ -57,7 +57,7 @@ app.use(cookieParser());
 
 app.use(
   "/uploads",
-  express.static(path.resolve(__dirname, "../../uploads"))
+  express.static(path.resolve("./uploads"))
 );
 
 /* ---------------- HEALTH CHECK ---------------- */
@@ -95,24 +95,21 @@ app.use("/api/watchlist", watchRoutes);
 
 /* ---------------- FRONTEND ---------------- */
 
-// Vite build output:
-// CineVo/server/client/dist
-const clientDistPath = path.join(__dirname, "..", "client", "dist");
+// React/Vite dist files are copied into server/public
+app.use(express.static("./public"));
 
-// Serve React/Vite static files
-app.use(
-  express.static(clientDistPath, {
-    index: false,
-  })
-);
+/* ---------------- REACT SPA FALLBACK ---------------- */
 
-// React SPA fallback
+// API requests go to the normal error handler
+// Everything else gets React's index.html
 app.use((req, res, next) => {
   if (req.path.startsWith("/api/")) {
     return next();
   }
 
-  return res.sendFile(path.join(clientDistPath, "index.html"));
+  return res.sendFile(
+    path.resolve("./public/index.html")
+  );
 });
 
 /* ---------------- ERROR HANDLING ---------------- */
