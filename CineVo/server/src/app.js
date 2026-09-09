@@ -43,7 +43,11 @@ const allowedOrigins = new Set(
   ].filter(Boolean)
 );
 
+// CORS applies to the API only. Vite's module scripts and stylesheet links may
+// send an Origin header too; applying this allow-list to all requests caused
+// valid /assets requests to throw before express.static could serve them.
 app.use(
+  "/api",
   cors({
     origin: (origin, callback) => {
       if (!origin || allowedOrigins.has(origin)) {
