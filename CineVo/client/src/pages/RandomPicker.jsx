@@ -906,7 +906,7 @@ export default function RandomPicker() {
       : null;
 
   return (
-    <main className="mx-auto min-h-[calc(100vh-70px)] max-w-3xl p-5">
+    <main className="mx-auto min-h-[calc(100vh-70px)] max-w-3xl px-4 py-5 sm:p-5">
       <div className="rounded-2xl border border-cine-border bg-cine-panel p-5">
         <h1 className="text-2xl font-black">
           Random Picker
@@ -1072,7 +1072,7 @@ export default function RandomPicker() {
             <img
               src={imageSrc(displayResult.poster_path)}
               alt={titleOf(displayResult)}
-              className="h-32 w-22 rounded-lg object-cover"
+              className="h-32 w-24 flex-none rounded-lg object-cover"
             />
 
             <span className="min-w-0">

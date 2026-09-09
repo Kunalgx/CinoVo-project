@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import useDebounce from "../hooks/useDebounce";
 import { movieService } from "../services/movieService";
 import { img, titleOf, year } from "../utils/tmdb";
-import { Moon, Search as SearchIcon, Sun } from "lucide-react";
+import { LogIn, Moon, Search as SearchIcon, Sun, UserRound } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import Avatar from "./Avatar";
 
@@ -42,9 +42,14 @@ export default function Navbar() {
     <header className="sticky top-0 z-40 border-b border-cine-border bg-cine-bg/90 backdrop-blur-xl">
       <div className="mx-auto flex max-w-[1450px] flex-wrap items-center gap-3 px-3 py-2.5 sm:px-5 md:flex-nowrap">
         <Link to="/" className="shrink-0 text-xl font-black tracking-tight">Cine<span className="text-slate-400">Vo</span></Link>
-        <button type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`} title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`} className="order-2 inline-flex h-9 w-9 items-center justify-center rounded-full border border-cine-border bg-cine-panel text-cine-gold transition hover:-translate-y-0.5 hover:border-cine-gold/70 md:order-3 md:hidden">
-          {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-        </button>
+        <div className="order-2 ml-auto flex items-center gap-2 md:order-3 md:hidden">
+          <Link to={user ? "/profile" : "/login"} aria-label={user ? "Open profile" : "Log in"} className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-cine-border bg-cine-panel text-cine-muted transition hover:border-cine-gold/70 hover:text-cine-gold">
+            {user ? <UserRound size={16} /> : <LogIn size={16} />}
+          </Link>
+          <button type="button" onClick={toggleTheme} aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} theme`} title={`Switch to ${theme === "dark" ? "light" : "dark"} theme`} className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-cine-border bg-cine-panel text-cine-gold transition hover:-translate-y-0.5 hover:border-cine-gold/70">
+            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+        </div>
         <div className="relative order-3 w-full min-w-0 md:order-2 md:flex-1 md:max-w-xl">
           <SearchIcon size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" aria-hidden="true" />
           <input value={q} onChange={(event) => setQ(event.target.value)} onFocus={() => setOpen(true)} onKeyDown={(event) => event.key === "Enter" && submitSearch()} placeholder="Search movies, TV shows, people..." className="h-10 w-full rounded-xl border border-cine-border bg-cine-input pl-9 pr-3 text-sm outline-none transition focus:border-cine-gold/60" />

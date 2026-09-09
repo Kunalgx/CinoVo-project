@@ -41,17 +41,18 @@ export default function TrendingSection({ onDetails }) {
     );
   const x = data[i];
   return (
-    <div className="cine-hero relative min-h-[390px] overflow-hidden rounded-2xl border border-cine-border bg-cine-panel shadow-2xl">
+    <div className="cine-hero relative min-h-[420px] overflow-hidden rounded-2xl border border-cine-border bg-cine-panel shadow-2xl sm:min-h-[390px]">
       <img
         src={img(x.backdrop_path, "original")}
-        className="absolute right-0 h-full w-1/2 object-cover"
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover object-center sm:left-auto sm:right-0 sm:w-1/2"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-[#10131a] via-[#10131a]/95 to-transparent" />
-      <div className="relative z-10 flex min-h-[390px] w-[65%] flex-col justify-end p-6 pb-14 sm:w-1/2 sm:justify-center sm:p-10">
+      <div className="absolute inset-0 bg-gradient-to-t from-[#10131a] via-[#10131a]/80 to-[#10131a]/30 sm:bg-gradient-to-r sm:from-[#10131a] sm:via-[#10131a]/95 sm:to-transparent" />
+      <div className="relative z-10 flex min-h-[420px] w-full flex-col justify-end p-5 pb-16 sm:min-h-[390px] sm:w-1/2 sm:justify-center sm:p-10">
         <div className="mb-2 text-[10px] font-extrabold uppercase tracking-[1.2px] text-slate-400">
           {x.media_type === "tv" ? "TV SHOW" : "MOVIE"}
         </div>
-        <h1 className="text-3xl font-black leading-tight sm:text-5xl">
+        <h1 className="text-2xl font-black leading-tight min-[400px]:text-3xl sm:text-5xl">
           {titleOf(x)}
         </h1>
         <div className="my-3 flex gap-2 text-xs">

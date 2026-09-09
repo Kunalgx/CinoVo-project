@@ -382,7 +382,7 @@ export default function Details({ type }) {
 
   return (
     <main className="pb-12">
-      <div className="relative z-10 mx-auto max-w-6xl px-5 pt-4 sm:pt-6">
+      <div className="relative z-10 mx-auto max-w-6xl px-4 pt-4 sm:px-5 sm:pt-6">
         <button
           onClick={goBack}
           className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-white/15 bg-black/70 px-3 py-2 text-sm font-bold text-slate-200 shadow-lg backdrop-blur transition hover:border-cine-gold/60 hover:bg-[#151922] hover:text-white active:scale-95"
@@ -398,7 +398,7 @@ export default function Details({ type }) {
           className="absolute inset-0 h-full w-full object-cover opacity-25"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-[#090b10]/30 via-[#090b10]/75 to-[#090b10]" />
-        <div className="relative mx-auto grid max-w-6xl gap-7 px-5 pb-10 pt-8 sm:grid-cols-[190px_1fr] sm:items-end sm:pt-10 lg:grid-cols-[230px_1fr] lg:gap-10">
+        <div className="relative mx-auto grid max-w-6xl gap-7 px-4 pb-10 pt-8 sm:grid-cols-[190px_1fr] sm:items-end sm:px-5 sm:pt-10 lg:grid-cols-[230px_1fr] lg:gap-10">
           <img
             src={img(movie.poster_path)}
             alt={title}
@@ -408,7 +408,7 @@ export default function Details({ type }) {
             <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-cine-accent">
               {type === "tv" ? "TV SHOW" : "MOVIE"} · {year(movie)}
             </p>
-            <h1 className="max-w-4xl text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">
+            <h1 className="max-w-4xl text-3xl font-black leading-tight sm:text-5xl lg:text-6xl">
               {title}
             </h1>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-300 sm:text-base">
@@ -442,7 +442,7 @@ export default function Details({ type }) {
         </div>
       </section>
 
-      <div className="mx-auto grid max-w-6xl gap-8 px-5 py-9 lg:grid-cols-[minmax(0,1fr)_280px]">
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 py-7 sm:px-5 sm:py-9 lg:grid-cols-[minmax(0,1fr)_280px]">
         <div className="min-w-0 space-y-9">
           <section>
             <h2 className="mb-4 text-xl font-black">Cast</h2>
@@ -843,11 +843,11 @@ function EpisodeCard({ episode, watched, scheduled, onToggle }) {
       item.episode?.number === episode.episode_number,
   );
   return (
-    <article className="grid min-h-[152px] grid-cols-[140px_minmax(0,1fr)] gap-4 rounded-xl border border-cine-border bg-cine-card p-3 sm:grid-cols-[155px_minmax(0,1fr)]">
+    <article className="grid gap-4 rounded-xl border border-cine-border bg-cine-card p-3 sm:min-h-[152px] sm:grid-cols-[155px_minmax(0,1fr)]">
       <img
         src={img(episode.still_path, "w300")}
         alt=""
-        className="h-[126px] w-[140px] rounded-lg object-cover sm:h-[132px] sm:w-[155px]"
+        className="aspect-video w-full rounded-lg object-cover sm:h-[132px] sm:w-[155px] sm:aspect-auto"
       />
       <div className="flex min-w-0 flex-col">
         <div className="min-w-0">

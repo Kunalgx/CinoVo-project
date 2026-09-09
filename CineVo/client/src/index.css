@@ -42,9 +42,13 @@
 }
 html {
   scroll-behavior: smooth;
+  background: var(--cine-bg);
 }
 body {
   margin: 0;
+  min-width: 320px;
+  max-width: 100%;
+  overflow-x: clip;
   background:
     radial-gradient(
       circle at 20% 0%,
@@ -54,6 +58,16 @@ body {
     var(--cine-bg);
   color: var(--cine-text);
   transition: background-color 220ms ease, color 220ms ease;
+}
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+img,
+video {
+  height: auto;
 }
 [data-theme="light"] body {
   background: radial-gradient(circle at 80% 0%, rgba(245, 197, 24, 0.1), transparent 32%), var(--cine-bg);
@@ -68,6 +82,10 @@ body {
 [data-theme="light"] .bg-\[\#121720\] {
   background-color: var(--cine-input);
 }
+[data-theme="light"] .bg-\[\#0d1119\],
+[data-theme="light"] .bg-\[\#181c24\] {
+  background-color: var(--cine-panel);
+}
 [data-theme="light"] .text-slate-100,
 [data-theme="light"] .text-slate-200,
 [data-theme="light"] .text-slate-300 {
@@ -76,6 +94,9 @@ body {
 [data-theme="light"] .text-slate-400,
 [data-theme="light"] .text-slate-500 {
   color: var(--cine-muted);
+}
+[data-theme="light"] .text-white {
+  color: var(--cine-text);
 }
 [data-theme="light"] .bg-cine-bg\/90 {
   background-color: color-mix(in srgb, var(--cine-bg) 90%, transparent);
@@ -169,6 +190,11 @@ select {
 }
 button {
   cursor: pointer;
+}
+input,
+select,
+textarea {
+  min-width: 0;
 }
 ::-webkit-scrollbar {
   width: 6px;
