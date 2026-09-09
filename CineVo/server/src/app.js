@@ -38,8 +38,6 @@ const allowedOrigins = new Set(
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests without an Origin header
-      // (same-origin requests, Postman, server-to-server, etc.)
       if (!origin || allowedOrigins.has(origin)) {
         return callback(null, true);
       }
@@ -97,12 +95,16 @@ app.use("/api/watchlist", watchRoutes);
 
 /* ---------------- FRONTEND ---------------- */
 
-// React/Vite production build
-const clientDistPath = path.resolve(__dirname, "../client/dist");
+// Vite build output:
+// CineVo/server/client/dist
+const clientDistPath = path.join(__dirname, "..", "client", "dist");
 
-
-// Serve React static files
-app.use(express.static(clientDistPath));
+// Serve React/Vite static files
+app.use(
+  express.static(clientDistPath, {
+    index: false,
+  })
+);
 
 // React SPA fallback
 app.use((req, res, next) => {
@@ -110,7 +112,7 @@ app.use((req, res, next) => {
     return next();
   }
 
-  res.sendFile(path.join(clientDistPath, "index.html"));
+  return res.sendFile(path.join(clientDistPath, "index.html"));
 });
 
 /* ---------------- ERROR HANDLING ---------------- */
