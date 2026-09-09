@@ -3,7 +3,6 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
-import path from "path";
 
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
@@ -12,6 +11,7 @@ import watchRoutes from "./routes/watchlist.routes.js";
 import imagekitRoutes from "./routes/imagekit.routes.js";
 import watchmodeRoutes from "./routes/watchmode.routes.js";
 import { notFound, errorHandler } from "./middleware/error.middleware.js";
+import { frontendDist, uploadsDirectory } from "./config/paths.js";
 
 const app = express();
 
@@ -29,9 +29,10 @@ app.use(
 
 const allowedOrigins = new Set(
   [
-    "http://localhost:5173",
-    "http://localhost:5174",
     process.env.CLIENT_URL,
+    ...(process.env.NODE_ENV === "production"
+      ? []
+      : ["http://localhost:5173", "http://localhost:5174"]),
   ].filter(Boolean)
 );
 
@@ -57,7 +58,7 @@ app.use(cookieParser());
 
 app.use(
   "/uploads",
-  express.static(path.resolve("./uploads"))
+  express.static(uploadsDirectory)
 );
 
 /* ---------------- HEALTH CHECK ---------------- */
@@ -95,8 +96,7 @@ app.use("/api/watchlist", watchRoutes);
 
 /* ---------------- FRONTEND ---------------- */
 
-// React/Vite dist files are copied into server/public
-app.use(express.static("./public"));
+app.use(express.static(frontendDist));
 
 /* ---------------- REACT SPA FALLBACK ---------------- */
 
@@ -107,9 +107,7 @@ app.use((req, res, next) => {
     return next();
   }
 
-  return res.sendFile(
-    path.resolve("./public/index.html")
-  );
+  return res.sendFile("index.html", { root: frontendDist });
 });
 
 /* ---------------- ERROR HANDLING ---------------- */

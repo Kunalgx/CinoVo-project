@@ -36,7 +36,11 @@ export async function sendPasswordResetEmail({ email, name, token }) {
     console.warn("Password reset email not sent: SMTP is not configured");
     return;
   }
-  const resetUrl = `${process.env.CLIENT_URL || "http://localhost:5173"}/reset-password?token=${encodeURIComponent(token)}`;
+  const clientUrl =
+    process.env.CLIENT_URL ||
+    (process.env.NODE_ENV === "production" ? null : "http://localhost:5173");
+  if (!clientUrl) throw new Error("CLIENT_URL is required for password reset emails");
+  const resetUrl = `${clientUrl}/reset-password?token=${encodeURIComponent(token)}`;
   await mailer.sendMail({
     from: process.env.SMTP_FROM || process.env.SMTP_USER,
     to: email,

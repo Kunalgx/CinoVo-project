@@ -30,7 +30,7 @@ Build Command: npm run install:all && npm run build
 Start Command: npm start --prefix server
 ```
 
-Express serves `client/dist` and the backend from the same origin. Set these server environment variables in the Render dashboard or secret manager:
+The frontend build is written to the repository root `dist/` directory. Express serves that directory and the backend from the same origin. Set these server environment variables in the Render dashboard or secret manager:
 
 - `PORT` (the platform-provided port, when required)
 - `MONGODB_URI`

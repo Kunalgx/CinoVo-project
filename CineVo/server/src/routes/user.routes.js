@@ -11,8 +11,9 @@ import { requireAuth } from "../middleware/auth.middleware.js";
 import { validate } from "../middleware/validate.middleware.js";
 import { profileSchema, avatarSchema } from "../validators/user.validator.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { uploadsDirectory } from "../config/paths.js";
 const storage = multer.diskStorage({
-  destination: "uploads/",
+  destination: uploadsDirectory,
   filename: (req, file, cb) =>
     cb(null, `${req.user.id}-${Date.now()}${path.extname(file.originalname)}`),
 });
